@@ -1,9 +1,11 @@
+import Header from '../uiParts/header'
 import './TodoList.css'
 
-function TodoList() {
+const TodoList = () => {
 
   return (
     <>
+    <Header></Header>
     </>
   )
 }
