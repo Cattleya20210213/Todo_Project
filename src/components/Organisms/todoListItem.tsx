@@ -1,37 +1,55 @@
-import { Checkbox, IconButton, ListItem, Typography } from "@mui/material";
+import { Checkbox, IconButton, ListItem, TextField } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import DeleteIcon from "@mui/icons-material/delete";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
+import { PrimitiveAtom, useAtom } from "jotai";
+import { TodoListItemsAtom } from "../../jotai/todoListAtom";
 
 export type TodoListItemProps = {
-  index: number,
-  title: string;
-  due: string;
+  todoItemAtom: PrimitiveAtom<TodoListItemsAtom[number]>;
 };
 
-const TodoListItem = (props: TodoListItemProps) => {
-  const { title, due } = props;
+const TodoItem = (props: TodoListItemProps) => {
+  const { todoItemAtom } = props;
+  const [todoItem, setTodoItem] = useAtom(todoItemAtom);
+  const { title, due } = todoItem;
+
   return (
     <ListItem
-      style={{ color: "black", backgroundColor: "white", width: "720px" }}
+      style={{
+        display: "flex",
+        columnGap: "16px",
+        color: "black",
+        backgroundColor: "white",
+        width: "720px",
+      }}
     >
       <Checkbox
         icon={<RadioButtonUncheckedIcon />}
         checkedIcon={<CheckCircleIcon />}
       />
-      <Typography minWidth={315} marginRight={5}>
-        {title}
-      </Typography>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <DatePicker
-          value={due ? dayjs(Date.now()) : dayjs(due)}
-          format="YYYY/MM/DD"
-        />
-      </LocalizationProvider>
+      <TextField
+        value={title}
+        label="todo"
+        variant="outlined"
+        sx={{ width: "320px" }}
+        onChange={(e) => {
+          setTodoItem((oldValue) => ({ ...oldValue, title: e.target.value }));
+        }}
+      ></TextField>
+      <DatePicker
+        label="Date"
+        value={due ? dayjs(due) : null}
+        format="YYYY/MM/DD"
+        onChange={(value) => {
+          setTodoItem((oldValue) => ({
+            ...oldValue,
+            due: value?.format("YYYY-MM-DD") || "",
+          }));
+        }}
+      />
       <IconButton aria-label="delete" disabled color="primary">
         <DeleteIcon />
       </IconButton>
@@ -39,4 +57,4 @@ const TodoListItem = (props: TodoListItemProps) => {
   );
 };
 
-export default TodoListItem;
+export default TodoItem;
