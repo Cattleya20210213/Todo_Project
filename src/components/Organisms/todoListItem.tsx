@@ -5,7 +5,11 @@ import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import DeleteIcon from "@mui/icons-material/delete";
 import dayjs from "dayjs";
 import { PrimitiveAtom, useAtom } from "jotai";
-import { TodoListItem, todoItemsAtom } from "../../jotai/todoListAtom";
+import {
+  TodoListItem,
+  todoItemsAtom,
+  initTodoListItem,
+} from "../../jotai/todoListAtom";
 import AddIcon from "@mui/icons-material/Add";
 
 export type TodoListItemProps = {
@@ -17,7 +21,7 @@ const TodoItem = (props: TodoListItemProps) => {
   const { todoItemAtom, isAdd } = props;
   const [todoItem, setTodoItem] = useAtom(todoItemAtom);
   const [, setTodoItemList] = useAtom(todoItemsAtom);
-  const { title, due } = todoItem;
+  const { title, due, isFinish: isFinished, isDeleted } = todoItem;
 
   return (
     <ListItem
@@ -31,7 +35,12 @@ const TodoItem = (props: TodoListItemProps) => {
     >
       {isAdd ? (
         <IconButton
-          onClick={() => setTodoItemList((oldvalue) => [...oldvalue, todoItem])}
+          onClick={() => {
+            if (todoItem.due && todoItem.title) {
+              setTodoItemList((oldvalue) => [...oldvalue, todoItem]);
+              setTodoItem(initTodoListItem);
+            }
+          }}
         >
           <AddIcon />
         </IconButton>
@@ -39,6 +48,13 @@ const TodoItem = (props: TodoListItemProps) => {
         <Checkbox
           icon={<RadioButtonUncheckedIcon />}
           checkedIcon={<CheckCircleIcon />}
+          checked={isFinished}
+          onChange={(e) =>
+            setTodoItem((oldValue) => ({
+              ...oldValue,
+              isFinish: e.target.checked,
+            }))
+          }
         />
       )}
       <TextField
@@ -61,7 +77,14 @@ const TodoItem = (props: TodoListItemProps) => {
           }));
         }}
       />
-      <IconButton aria-label="delete" color="primary" disabled={!!isAdd}>
+      <IconButton
+        aria-label="delete"
+        color="primary"
+        disabled={!!isAdd}
+        onClick={() =>
+          setTodoItem((oldValue) => ({ ...oldValue, isDelete: !isDeleted }))
+        }
+      >
         <DeleteIcon />
       </IconButton>
     </ListItem>
