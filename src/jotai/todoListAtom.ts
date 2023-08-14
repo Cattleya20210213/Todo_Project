@@ -25,6 +25,6 @@ const testItems:TodoListItem[] = [{
 }]
 
 
-const todoItemsAtom = atom(testItems);
+export const todoItemsAtom = atom(testItems);
 export const todoItemAtomsAtom = splitAtom(todoItemsAtom);
 export const todoItemToAddAtom = atom(initTodoListItem);
