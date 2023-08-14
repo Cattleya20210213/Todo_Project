@@ -1,5 +1,5 @@
 import Header from "../uiParts/header";
-import { todoItemAtomsAtom } from "../../jotai/todoListAtom";
+import { todoItemToAddAtom, todoItemAtomsAtom } from "../../jotai/todoListAtom";
 import "./TodoList.css";
 import { List } from "@mui/material";
 import { useAtom } from "jotai";
@@ -10,6 +10,7 @@ const TodoList = () => {
   return (
     <>
       <Header></Header>
+      <TodoListItem todoItemAtom={todoItemToAddAtom} isAdd={true} />
       <List>
         {todoList.map((todoItemAtom) => (
           <TodoListItem todoItemAtom={todoItemAtom}></TodoListItem>

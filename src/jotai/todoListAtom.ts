@@ -1,22 +1,30 @@
 import { atom } from "jotai";
 import { splitAtom } from "jotai/utils";
 
-export type TodoListItemsAtom = {
+export type TodoListItem = {
   title: string;
   due: string;
-  isFineshed: boolean;
-}[];
+  isFinished: boolean;
+};
 
-const testItems:TodoListItemsAtom = [{
+const initTodoListItem:TodoListItem = {
+  title:'',
+  due:'',
+  isFinished:false,
+}
+
+const testItems:TodoListItem[] = [{
   title:'test1',
   due: '2023-01-01',
-  isFineshed:false,
+  isFinished:false,
+
 },{
   title:'test2',
   due: '',
-  isFineshed:false,
+  isFinished:false,
 }]
 
 
 const todoItemsAtom = atom(testItems);
 export const todoItemAtomsAtom = splitAtom(todoItemsAtom);
+export const todoItemToAddAtom = atom(initTodoListItem);

@@ -5,14 +5,16 @@ import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import DeleteIcon from "@mui/icons-material/delete";
 import dayjs from "dayjs";
 import { PrimitiveAtom, useAtom } from "jotai";
-import { TodoListItemsAtom } from "../../jotai/todoListAtom";
+import { TodoListItem } from "../../jotai/todoListAtom";
+import AddIcon from "@mui/icons-material/Add";
 
 export type TodoListItemProps = {
-  todoItemAtom: PrimitiveAtom<TodoListItemsAtom[number]>;
+  todoItemAtom: PrimitiveAtom<TodoListItem>;
+  isAdd?: boolean;
 };
 
 const TodoItem = (props: TodoListItemProps) => {
-  const { todoItemAtom } = props;
+  const { todoItemAtom, isAdd } = props;
   const [todoItem, setTodoItem] = useAtom(todoItemAtom);
   const { title, due } = todoItem;
 
@@ -26,10 +28,16 @@ const TodoItem = (props: TodoListItemProps) => {
         width: "720px",
       }}
     >
-      <Checkbox
-        icon={<RadioButtonUncheckedIcon />}
-        checkedIcon={<CheckCircleIcon />}
-      />
+      {isAdd ? (
+        <IconButton>
+          <AddIcon />
+        </IconButton>
+      ) : (
+        <Checkbox
+          icon={<RadioButtonUncheckedIcon />}
+          checkedIcon={<CheckCircleIcon />}
+        />
+      )}
       <TextField
         value={title}
         label="todo"
@@ -50,7 +58,7 @@ const TodoItem = (props: TodoListItemProps) => {
           }));
         }}
       />
-      <IconButton aria-label="delete" disabled color="primary">
+      <IconButton aria-label="delete" color="primary" disabled={!!isAdd}>
         <DeleteIcon />
       </IconButton>
     </ListItem>
