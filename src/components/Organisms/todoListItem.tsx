@@ -21,7 +21,9 @@ const TodoItem = (props: TodoListItemProps) => {
   const { todoItemAtom, isAdd } = props;
   const [todoItem, setTodoItem] = useAtom(todoItemAtom);
   const [, setTodoItemList] = useAtom(todoItemsAtom);
-  const { title, due, isFinish: isFinished, isDeleted } = todoItem;
+  const { title, due, isFinish, isDelete, isError } = todoItem;
+  const upDateTodoItem = (newValueTodoItem: Partial<TodoListItem>) =>
+    setTodoItem((oldValue) => ({ ...oldValue, ...newValueTodoItem }));
 
   return (
     <ListItem
@@ -48,22 +50,38 @@ const TodoItem = (props: TodoListItemProps) => {
         <Checkbox
           icon={<RadioButtonUncheckedIcon />}
           checkedIcon={<CheckCircleIcon />}
-          checked={isFinished}
+          checked={isFinish}
           onChange={(e) =>
-            setTodoItem((oldValue) => ({
-              ...oldValue,
+            upDateTodoItem({
               isFinish: e.target.checked,
-            }))
+            })
           }
         />
       )}
       <TextField
+        error={isError}
         value={title}
         label="todo"
         variant="outlined"
         sx={{ width: "320px" }}
         onChange={(e) => {
           setTodoItem((oldValue) => ({ ...oldValue, title: e.target.value }));
+        }}
+        onBlur={(e) => {
+          const newTitle = e.target.value;
+          if (newTitle) {
+            setTodoItem((oldValue) => ({
+              ...oldValue,
+              title: newTitle,
+              oldTitle: newTitle,
+              isError: false,
+            }));
+          } else {
+            setTodoItem((oldValue) => ({
+              ...oldValue,
+              title: oldValue.oldTitle,
+            }));
+          }
         }}
       ></TextField>
       <DatePicker
@@ -82,7 +100,7 @@ const TodoItem = (props: TodoListItemProps) => {
         color="primary"
         disabled={!!isAdd}
         onClick={() =>
-          setTodoItem((oldValue) => ({ ...oldValue, isDelete: !isDeleted }))
+          setTodoItem((oldValue) => ({ ...oldValue, isDelete: !isDelete }))
         }
       >
         <DeleteIcon />

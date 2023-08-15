@@ -5,7 +5,9 @@ export type TodoListItem = {
   title: string;
   due: string;
   isFinish: boolean;
-  isDelete: boolean
+  isDelete: boolean;
+  isError: boolean;
+  oldTitle: string;
 };
 
 export const initTodoListItem:TodoListItem = {
@@ -13,20 +15,10 @@ export const initTodoListItem:TodoListItem = {
   due:'',
   isFinish:false,
   isDelete:false,
+  isError:false,
+  oldTitle:'',
 }
 
-const testItems:TodoListItem[] = [{
-  ...initTodoListItem,
-  title:'test1',
-  due: '2023-01-01',
-
-},{
-  ...initTodoListItem,
-  title:'test2',
-  due: '2023-01-01',
-}]
-
-
-export const todoItemsAtom = atom(testItems);
+export const todoItemsAtom = atom<TodoListItem[]>([]);
 export const todoItemAtomsAtom = splitAtom(todoItemsAtom);
 export const todoItemToAddAtom = atom(initTodoListItem);
