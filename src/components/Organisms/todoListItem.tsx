@@ -1,5 +1,5 @@
 import { Checkbox, IconButton, ListItem, TextField } from "@mui/material";
-import { DatePicker } from "@mui/x-date-pickers";
+import { MobileDatePicker } from "@mui/x-date-pickers";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import DeleteIcon from "@mui/icons-material/delete";
@@ -22,7 +22,7 @@ const TodoItem = (props: TodoListItemProps) => {
   const [todoItem, setTodoItem] = useAtom(todoItemAtom);
   const [, setTodoItemList] = useAtom(todoItemsAtom);
   const { title, due, isFinish, isDelete, isError } = todoItem;
-  const upDateTodoItem = (newValueTodoItem: Partial<TodoListItem>) =>
+  const updateTodoItem = (newValueTodoItem: Partial<TodoListItem>) =>
     setTodoItem((oldValue) => ({ ...oldValue, ...newValueTodoItem }));
 
   return (
@@ -37,10 +37,13 @@ const TodoItem = (props: TodoListItemProps) => {
     >
       {isAdd ? (
         <IconButton
+          aria-label="delete"
+          color="primary"
+          disabled={!title}
           onClick={() => {
-            if (todoItem.due && todoItem.title) {
+            if (todoItem.title) {
               setTodoItemList((oldvalue) => [...oldvalue, todoItem]);
-              setTodoItem(initTodoListItem);
+              updateTodoItem(initTodoListItem);
             }
           }}
         >
@@ -52,7 +55,7 @@ const TodoItem = (props: TodoListItemProps) => {
           checkedIcon={<CheckCircleIcon />}
           checked={isFinish}
           onChange={(e) =>
-            upDateTodoItem({
+            updateTodoItem({
               isFinish: e.target.checked,
             })
           }
@@ -65,17 +68,15 @@ const TodoItem = (props: TodoListItemProps) => {
         variant="outlined"
         sx={{ width: "320px" }}
         onChange={(e) => {
-          setTodoItem((oldValue) => ({ ...oldValue, title: e.target.value }));
+          updateTodoItem({ title: e.target.value });
         }}
         onBlur={(e) => {
           const newTitle = e.target.value;
           if (newTitle) {
-            setTodoItem((oldValue) => ({
-              ...oldValue,
+            updateTodoItem({
               title: newTitle,
               oldTitle: newTitle,
-              isError: false,
-            }));
+            });
           } else {
             setTodoItem((oldValue) => ({
               ...oldValue,
@@ -84,24 +85,21 @@ const TodoItem = (props: TodoListItemProps) => {
           }
         }}
       ></TextField>
-      <DatePicker
+      <MobileDatePicker
         label="Date"
         value={due ? dayjs(due) : null}
         format="YYYY/MM/DD"
         onChange={(value) => {
-          setTodoItem((oldValue) => ({
-            ...oldValue,
+          updateTodoItem({
             due: value?.format("YYYY-MM-DD") || "",
-          }));
+          });
         }}
       />
       <IconButton
         aria-label="delete"
         color="primary"
         disabled={!!isAdd}
-        onClick={() =>
-          setTodoItem((oldValue) => ({ ...oldValue, isDelete: !isDelete }))
-        }
+        onClick={() => updateTodoItem({ isDelete: !isDelete })}
       >
         <DeleteIcon />
       </IconButton>
