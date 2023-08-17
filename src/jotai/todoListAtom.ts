@@ -1,5 +1,5 @@
 import { atom } from "jotai";
-import { splitAtom } from "jotai/utils";
+import { atomWithStorage, splitAtom } from "jotai/utils";
 
 export type TodoListItem = {
   title: string;
@@ -19,6 +19,6 @@ export const initTodoListItem:TodoListItem = {
   oldTitle:'',
 }
 
-export const todoItemsAtom = atom<TodoListItem[]>([]);
+export const todoItemsAtom = atomWithStorage<TodoListItem[]>('todo_list',[]);
 export const todoItemAtomsAtom = splitAtom(todoItemsAtom);
 export const todoItemToAddAtom = atom(initTodoListItem);
