@@ -90,9 +90,12 @@ const TodoListItem = (props: TodoListItemProps) => {
             updateTodoItem({
               title: newTitle,
               oldTitle: newTitle,
+              isError: false,
             });
           } else {
-            updateTodoItem({ title: todoItem.oldTitle });
+            if (!isTypeAdd) {
+              updateTodoItem({ title: todoItem.oldTitle, isError: true });
+            }
           }
         }}
       ></TextField>

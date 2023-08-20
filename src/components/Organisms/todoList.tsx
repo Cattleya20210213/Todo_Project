@@ -22,16 +22,18 @@ const TodoList = () => {
   const [todoItemAtoms] = useAtom(todoItemAtomsAtom);
   const [, setTodoList] = useAtom(todoListAtom);
   const [todoItemToAdd] = useAtom(todoItemToAddAtom);
-  const [isAddTodoItem] = useAtom(isAddTodoItemAtom);
-  const [isDeleteTodoItem] = useAtom(isDeleteTodoItemAtom);
+  const [isAddTodoItem, setIsAddTodoItem] = useAtom(isAddTodoItemAtom);
+  const [isDeleteTodoItem, setIsDeleteTodoItem] = useAtom(isDeleteTodoItemAtom);
 
   useEffect(() => {
     if (isAddTodoItem) {
       setTodoList((oldValue) => [...oldValue, todoItemToAdd]);
+      setIsAddTodoItem(false);
     } else if (isDeleteTodoItem) {
       setTodoList((oldValue) =>
         oldValue.filter((todoItem) => !todoItem.isDelete)
       );
+      setIsDeleteTodoItem(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAddTodoItem, isDeleteTodoItem]);
