@@ -1,4 +1,10 @@
-import { Checkbox, IconButton, ListItem, TextField } from "@mui/material";
+import {
+  Checkbox,
+  IconButton,
+  ListItem,
+  SxProps,
+  TextField,
+} from "@mui/material";
 import { MobileDatePicker } from "@mui/x-date-pickers";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
@@ -6,24 +12,35 @@ import DeleteIcon from "@mui/icons-material/delete";
 import dayjs from "dayjs";
 import { PrimitiveAtom, useAtom } from "jotai";
 import {
-  TodoListItem,
-  todoItemsAtom,
-  initTodoListItem,
-} from "../../jotai/todoListAtom";
+  todoListAtom,
+  isAddTodoItemAtom,
+  isDeleteTodoItemAtom,
+} from "../../jotai/atoms";
 import AddIcon from "@mui/icons-material/Add";
+import { TodoItemInfo } from "../../jotai/type/todoItemInfo";
 
-export type TodoListItemProps = {
-  todoItemAtom: PrimitiveAtom<TodoListItem>;
-  isAdd?: boolean;
+type TodoItemProps = {
+  type: "list_item";
+  todoItemAtom: PrimitiveAtom<TodoItemInfo>;
+  listItemSx: SxProps;
 };
 
-const TodoItem = (props: TodoListItemProps) => {
-  const { todoItemAtom, isAdd } = props;
+type AddItemProps = Pick<TodoItemProps, "todoItemAtom" | "listItemSx"> & {
+  type: "add_item";
+  todoListAtom: typeof todoListAtom;
+};
+
+export type TodoListItemProps = TodoItemProps | AddItemProps;
+
+const TodoListItem = (props: TodoListItemProps) => {
+  const { type, todoItemAtom } = props;
   const [todoItem, setTodoItem] = useAtom(todoItemAtom);
-  const [, setTodoItemList] = useAtom(todoItemsAtom);
   const { title, due, isFinish, isDelete, isError } = todoItem;
-  const updateTodoItem = (newValueTodoItem: Partial<TodoListItem>) =>
+  const updateTodoItem = (newValueTodoItem: Partial<TodoItemInfo>) =>
     setTodoItem((oldValue) => ({ ...oldValue, ...newValueTodoItem }));
+  const [, setIsAddTodoItem] = useAtom(isAddTodoItemAtom);
+  const [, setIsDeleteTodoItem] = useAtom(isDeleteTodoItemAtom);
+  const isTypeAdd = type === "add_item";
 
   return (
     <ListItem
@@ -35,16 +52,13 @@ const TodoItem = (props: TodoListItemProps) => {
         width: "720px",
       }}
     >
-      {isAdd ? (
+      {isTypeAdd ? (
         <IconButton
           aria-label="delete"
           color="primary"
           disabled={!title}
           onClick={() => {
-            if (todoItem.title) {
-              setTodoItemList((oldvalue) => [...oldvalue, todoItem]);
-              updateTodoItem(initTodoListItem);
-            }
+            setIsAddTodoItem(!!todoItem.title);
           }}
         >
           <AddIcon />
@@ -76,12 +90,12 @@ const TodoItem = (props: TodoListItemProps) => {
             updateTodoItem({
               title: newTitle,
               oldTitle: newTitle,
+              isError: false,
             });
           } else {
-            setTodoItem((oldValue) => ({
-              ...oldValue,
-              title: oldValue.oldTitle,
-            }));
+            if (!isTypeAdd) {
+              updateTodoItem({ title: todoItem.oldTitle, isError: true });
+            }
           }
         }}
       ></TextField>
@@ -98,8 +112,11 @@ const TodoItem = (props: TodoListItemProps) => {
       <IconButton
         aria-label="delete"
         color="primary"
-        disabled={!!isAdd}
-        onClick={() => updateTodoItem({ isDelete: !isDelete })}
+        disabled={!!isTypeAdd}
+        onClick={() => {
+          updateTodoItem({ isDelete: !isDelete });
+          setIsDeleteTodoItem(true);
+        }}
       >
         <DeleteIcon />
       </IconButton>
@@ -107,4 +124,4 @@ const TodoItem = (props: TodoListItemProps) => {
   );
 };
 
-export default TodoItem;
+export default TodoListItem;
