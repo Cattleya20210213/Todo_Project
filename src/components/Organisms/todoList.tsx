@@ -1,7 +1,7 @@
 import { List, SxProps } from "@mui/material";
 import {
-  isAddTodoItemAtom,
-  isDeleteTodoItemAtom,
+  isAddable,
+  isDeleted,
   todoItemAtomsAtom,
   todoItemToAddAtom,
   todoListAtom,
@@ -22,8 +22,8 @@ const TodoList = () => {
   const [todoItemAtoms] = useAtom(todoItemAtomsAtom);
   const [, setTodoList] = useAtom(todoListAtom);
   const [todoItemToAdd] = useAtom(todoItemToAddAtom);
-  const [isAddTodoItem, setIsAddTodoItem] = useAtom(isAddTodoItemAtom);
-  const [isDeleteTodoItem, setIsDeleteTodoItem] = useAtom(isDeleteTodoItemAtom);
+  const [isAddTodoItem, setIsAddTodoItem] = useAtom(isAddable);
+  const [isDeleteTodoItem, setIsDeleteTodoItem] = useAtom(isDeleted);
 
   useEffect(() => {
     if (isAddTodoItem) {

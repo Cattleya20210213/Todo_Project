@@ -1,5 +1,5 @@
 import Header from "../uiParts/header";
-import "./TodoList.css";
+import "./../../assets/styles/todoList.css";
 import TodoList from "../Organisms/todoList";
 
 const Index = () => {

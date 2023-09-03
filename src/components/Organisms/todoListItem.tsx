@@ -11,11 +11,7 @@ import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import DeleteIcon from "@mui/icons-material/delete";
 import dayjs from "dayjs";
 import { PrimitiveAtom, useAtom } from "jotai";
-import {
-  todoListAtom,
-  isAddTodoItemAtom,
-  isDeleteTodoItemAtom,
-} from "../../jotai/atoms";
+import { todoListAtom, isAddable, isDeleted } from "../../jotai/atoms";
 import AddIcon from "@mui/icons-material/Add";
 import { TodoItemInfo } from "../../jotai/type/todoItemInfo";
 
@@ -38,8 +34,8 @@ const TodoListItem = (props: TodoListItemProps) => {
   const { title, due, isFinish, isDelete, isError } = todoItem;
   const updateTodoItem = (newValueTodoItem: Partial<TodoItemInfo>) =>
     setTodoItem((oldValue) => ({ ...oldValue, ...newValueTodoItem }));
-  const [, setIsAddTodoItem] = useAtom(isAddTodoItemAtom);
-  const [, setIsDeleteTodoItem] = useAtom(isDeleteTodoItemAtom);
+  const [, setIsAddTodoItem] = useAtom(isAddable);
+  const [, setIsDeleteTodoItem] = useAtom(isDeleted);
   const isTypeAdd = type === "add_item";
 
   return (
